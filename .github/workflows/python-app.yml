@@ -1,0 +1,31 @@
+name: 'Check'
+ 
+on:
+  push:
+  schedule:
+  # 16+8=24
+  - cron: '0 16 * * *' 
+
+jobs:
+  bot:
+    runs-on: ubuntu-latest
+    steps:
+    # 首先copy git仓库到虚拟机上
+    - uses: actions/checkout@v1
+      
+    # 安装东西
+    - name: Install Python
+      run: |
+        sudo apt update && \
+        sudo apt install python3
+  
+    - name: Pip
+      run: |
+          pip3 install requests
+      
+    # 执行仓库中的脚本文件
+    - name: Run python
+      run: |
+        python3 check.py <<EOF
+        ${{secrets.config}}
+        EOF
