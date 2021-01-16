@@ -18,8 +18,6 @@
 **Q:** 打卡的默认选项是什么?  
 **A:** 默认选项为一切正常并且素康🐎为绿色💚，从浏览器抓的包，想自己抓用Fiddler或者BurpSuite。可以通过访问打卡页面获取之前的选项，但是太懒了，还没有做。
 
-![option](./pic/option.png)
-
 **Q:** 哪个网页里抓的包？  
 **A:** <https://m.nuaa.edu.cn/ncov/wap/default>，校外打卡；<https://m.nuaa.edu.cn/ncov/wap/nuaa/index>，校内打卡。其中位置信息从<https://restapi.amap.com/v3/geocode/regeo?key=729923f88542d91590470f613adb27b5&s=rsv3&location=经度,纬度>获取。
 
@@ -127,6 +125,6 @@ push打卡测试一下，如果成功就可以每天00：00打卡🌶
 
 ### 修改打卡时间
 
-修改(python-app.yml)[./.github/workflows/python-app.yml]的cron，别忘记换算时间utc+8
+修改[python-app.yml](./.github/workflows/python-app.yml)的cron（具体可以使用搜索引擎），别忘记换算时间utc+8
 
 ### 修改消息推送方式
