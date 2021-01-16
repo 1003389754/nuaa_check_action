@@ -5,18 +5,18 @@
 - **多人打卡，一人设置，全家👨‍👨‍👦‍👦享福（每次更新全村都能收到提醒，烦死了）**
 - **校外打卡，无需抓包**
 - **基于GitHub Action**
-- **QQ通知📧**
+- **邮箱通知📧**
 
 **免责声明：本项目仅仅可以学习研究，请遵守校内纪律和相关法规。如果出现信息错误等后果概不负责。**
 
-本项目以 MIT 协议开源，详情请见 [LICENSE](LICENSE) 文件。
+本项目以 MIT 协议开源，详情请见 [LICENSE](./LICENSE) 文件。
 
 有问题可以提出issue与我🤺。
 
 ## Q&A
 
 **Q:** 打卡的默认选项是什么?  
-**A:** 默认选项为一切正常并且素康🐎为绿色💚，从浏览器抓的包，想自己抓用Fiddler或者BurpSuite。可以通过访问打卡页面获取之前的选项，但是太懒了，还没有做。如下图所示：
+**A:** 默认选项为一切正常并且素康🐎为绿色💚，从浏览器抓的包，想自己抓用Fiddler或者BurpSuite。可以通过访问打卡页面获取之前的选项，但是太懒了，还没有做。
 
 ![option](./pic/option.png)
 
@@ -42,7 +42,7 @@
 
 ### Step.2
 
-设置Secrets，新建secret字段
+设置Secrets，新建secret字段 **config**
 
 ![set_secret](./pic/set_secret.gif)
 
@@ -55,7 +55,7 @@ students里面的stu_number、mail和经纬度是必须的，mail至少明确给
 |  KEY   | 作用  |
 |  ----  | ----  |
 | mail_sender  | 使用该邮件地址发送邮件提醒 |
-| mail_password  | 邮件smtp的密码，不同于邮箱密码，请登录邮箱进行设置 |
+| smtp_password  | 邮件smtp的密码，不同于邮箱密码，请登录邮箱进行设置 |
 |  students  |  收件人列表，可以一人或多人  |
 |  stu_number  |  打卡学生的学生id  |
 |  password  | 打卡学生教务密码  |
@@ -117,21 +117,16 @@ students里面的stu_number、mail和经纬度是必须的，mail至少明确给
 
 ### Step.3
 
-点击你Fork的项目中的Action，点击Enable开启Action
-
-![enable_action](./pic/enable_action.gif)
+点击你的项目中的Action，点击Enable开启Action
 
 ### Step.4
 
-push打卡测试一下，如果成功就可以每天打卡🌶
-
-![test](./pic/test.gif)
+push打卡测试一下，如果成功就可以每天00：00打卡🌶
 
 ## Advancement
 
 ### 修改打卡时间
 
+修改(python-app.yml)[./.github/workflows/python-app.yml]的cron，别忘记换算时间utc+8
+
 ### 修改消息推送方式
-
-run
-
