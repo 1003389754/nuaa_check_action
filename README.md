@@ -61,7 +61,7 @@
 |  latitude  | 经度，**为数值不是字符串**，通过高德地图获取的，具体获取见QA  |
 |  longitude  | 纬度，**为数值不是字符串**，通过高德地图获取的，具体获取见QA  |
 
-students里面的stu_number、mail和经纬度是必须的，mail至少明确给出空值。
+students里面的stu_number、mail和经纬度是必须的，mail至少明确给出空值。  
 **如果不需要邮件提醒，就把所有邮件相关的值都设置为空；如果某个人不需要邮件提醒则把这个人的收信箱设置为空。**
 
 举个🌰吧叭
@@ -142,4 +142,4 @@ push打卡测试一下
 
 修改[python-app.yml](./.github/workflows/python-app.yml)的cron（具体设置方法可以使用搜索引擎搜索）
 
-### 修改消息推送方式dd
+### 修改消息推送方式
