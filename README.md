@@ -131,4 +131,4 @@ push打卡测试一下，如果成功就可以每天00：00打卡🌶
 
 修改[python-app.yml](./.github/workflows/python-app.yml)的cron（具体设置方法可以使用搜索引擎搜索）
 
-### 修改消息推送方式
+### 修改消息推送方式dd
