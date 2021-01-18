@@ -2,7 +2,7 @@
 
 ## Description
 
-- **多人打卡，一人设置，全家👨‍👨‍👦‍👦享福（每次更新全村都能收到提醒，烦死了）**
+- **多人打卡，一人设置，全家👨‍👨‍👦‍👦享福**
 - **校外打卡，无需抓包**
 - **基于GitHub Action**
 - **邮箱通知📧**
@@ -34,23 +34,21 @@
 
 ## Usage
 
-### Step.1
+### Step.1 Fork
 
 点击右上角Fork，Fork至自己的仓库
 
 ![fork](./pic/fork.png)
 
-### Step.2
+### Step.2 设置Secrets
 
 设置Secrets，新建secret字段 **config**
 
 ![set_secret](./pic/set_secret.gif)
 
-这是一个代表打卡信息的Json，**如果不需要邮件提醒，就把所有邮件相关的值都设置为空；如果某个人不需要邮件提醒则把这个人的收信箱设置为空。**
+这是一个代表打卡信息的Json，
 
 字段说明
-
-students里面的stu_number、mail和经纬度是必须的，mail至少明确给出空值。
 
 |  KEY   | 作用  |
 |  ----  | ----  |
@@ -62,6 +60,9 @@ students里面的stu_number、mail和经纬度是必须的，mail至少明确给
 |  mail  | 打卡学生的收信箱，用于接收打卡提示  |
 |  latitude  | 经度，**为数值不是字符串**，通过高德地图获取的，具体获取见QA  |
 |  longitude  | 纬度，**为数值不是字符串**，通过高德地图获取的，具体获取见QA  |
+
+students里面的stu_number、mail和经纬度是必须的，mail至少明确给出空值。
+**如果不需要邮件提醒，就把所有邮件相关的值都设置为空；如果某个人不需要邮件提醒则把这个人的收信箱设置为空。**
 
 举个🌰吧叭
 
@@ -115,15 +116,25 @@ students里面的stu_number、mail和经纬度是必须的，mail至少明确给
 }
 ```
 
-### Step.3
+QQ邮箱smtp密码获取如下：
 
-点击你的项目中的Action，点击Enable开启Action
+![smtp1](./pic/smtp1.png)
+然后下面选择开启pop3/smtp服务，得到smtp密码
+![smtp2](./pic/smtp2.png)
+
+### Step.3 开启Action
+
+点击你的项目中的Action，开启Action；然后选择Check，点击`enable workflow`
 
 ![enable action](./pic/enable_action.gif)
 
-### Step.4
+### Step.4 测试
 
-push打卡测试一下，如果成功就可以每天00：00打卡🌶
+push打卡测试一下
+![test1](./pic/test1.png)
+![test2](./pic/test2.png)
+
+如果成功就可以每天00：00打卡（准确时间会是00：45左右，任务会有的延迟）🌶
 
 ## Advancement
 
