@@ -37,15 +37,16 @@ def login(stu_number, password):
             # cookies = cookies + '; ' + \
             #     re.search(r'UUkey=([a-zA-Z0-9]+)', cookies2).group(0)
             cookies.update(dict(response.cookies))
-
+            
             # print(cookies)
-            return cookies
+            print(response.text)
+            return cookies, '登陆结果：' + response.text + '\n'
         except:
             print('login failed.')
             traceback.print_exc()
             pass
     # raise Exception('lOGIN FAIL')
-    return {}
+    return {}, '登陆结果：login faild,请检查账号密码\n'
 
 # longitude: 经度； latitude: 纬度
 # 根据经纬度访问高德API，并且返回打卡时候“geo_api_info”字段的值
@@ -102,7 +103,7 @@ def get_address_info(longitude, latitude):
     return geo_api_info
     # print(dump.dump_all(response).decode('utf-8'))
 
-# 获取uid，id，打卡时候会用到
+# 获取uid，id，打卡时候会用到，获取失败异常最可能的原因是账号密码错误
 def get_uid_id(cookies):
     for _ in range(try_times):
         try:
@@ -112,12 +113,12 @@ def get_uid_id(cookies):
             response.encoding = 'utf-8'
             uid = re.search(r'"uid":"([0-9]*)"', response.text).group(1)
             id = re.search(r'"id":([0-9]*)', response.text).group(1)
-            return uid,id
+            return uid,id, 'UID获取成功\n'
         except:
             traceback.print_exc()
     # 就这样吧，让他崩溃，万一假打卡了就不好了
     print('获取id、uid失败')
-    return False
+    return False, '获取id、uid失败\n'
 
 # 签到，返回True成功，否则失败
 def check(cookies, geo_api_info, id, uid):
@@ -191,23 +192,24 @@ def check(cookies, geo_api_info, id, uid):
 
             if response.text.find('成功') >= 0:
                 print('打卡成功')
-                return True
+                return True, '打卡成功' + '\n'
             else:
                 print('打卡失败')
         except:
             traceback.print_exc()
-    return False
+    return False, '打卡失败' + '\n'
 
-def send_result(config, recever, result):
+
+def send_result(config, recever, result, messgae):
     mail_sender = config['mail_sender']
     smtp_password = config['smtp_password']
     smtp_host = config['smtp_host']
     if result == True:
         send_mail(mail_sender, smtp_password, smtp_host,
-                  recever, '打卡成功', '打卡成功', '主人', '打卡姬')
+                  recever, messgae, '打卡成功', '主人', '打卡姬')
     else:
         send_mail(mail_sender, smtp_password, smtp_host,
-                  recever, '打卡失败', '打卡失败', '主人', '打卡姬')
+                  recever, messgae, '打卡失败', '主人', '打卡姬')
 
 def main():
     config = sys.stdin.read()
@@ -220,16 +222,20 @@ def main():
         longitude = student['longitude']
         latitude = student['latitude']
         mail = student['mail']
+        message = ''
+        message2 = ''
         print('--------------------------------------')
         try:
-            cookies = login(stu_number, password)
+            cookies, message = login(stu_number, password)
             geo_api_info = get_address_info(longitude, latitude)
-            uid, id = get_uid_id(cookies)
-            result = check(cookies, geo_api_info, id, uid)
+            uid, id, message1 = get_uid_id(cookies)
+            result, message2 = check(cookies, geo_api_info, id, uid)
+            message += message1 + message2
         except:
-            pass
+            print('发生错误，可能原因是打卡密码错误或者经纬度错误')
+            message += '发生错误，可能原因是打卡密码错误或者经纬度错误'
         if mail != '':
-            send_result(config, mail, result)
+            send_result(config, mail, result, message)
 
 
 if __name__ == '__main__':
