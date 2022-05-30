@@ -306,8 +306,8 @@ def main():
     config = sys.stdin.read()
     config = json.loads(config)
     # config = []
-    with open("stu.json", 'r', encoding='UTF-8') as f:
-        config = json.load(f)
+    # with open("stu.json", 'r', encoding='UTF-8') as f:
+    #     config = json.load(f)
 
     for student in config['students']:
         result = False  # 打卡结果，False表示没有打上
