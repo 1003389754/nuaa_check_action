@@ -6,12 +6,31 @@ import sys
 import time
 import traceback
 import requests
+
+from login import Login
 from send_mail import send_mail
 
 # from requests_toolbelt.utils import dump
 
 try_times = 1  # 失败这么多次后就直接不管了
 delay = 2  # 访问页面前的延迟，为了防止过快访问网站被封IP
+
+# headers，所有的请求都用这个作为headers
+headers = {
+    'Host': 'm.nuaa.edu.cn',
+    'Connection': 'close',
+    'Accept': 'application/json, text/javascript, */*; q=0.01',
+    'Sec-Fetch-Dest': 'empty',
+    'X-Requested-With': 'XMLHttpRequest',
+    'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 10; TAS-AN00 Build/HUAWEITAS-AN00)',
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'Origin': 'https://m.nuaa.edu.cn',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Mode': 'cors',
+    'Referer': 'https://m.nuaa.edu.cn/uc/wap/login/check',
+    'Accept-Language': 'zh-CN,zh;q=0.9',
+    'Cookie': ''
+}
 
 
 # 登陆并且返回json形式的cookie，如果登陆失败返回空串
@@ -48,6 +67,18 @@ def login(stu_number, password):
             pass
     # raise Exception('lOGIN FAIL')
     return {}, '登陆结果：login faild,请检查账号密码\n'
+
+
+# 使用统一身份认证登陆
+def new_login(login_id, login_password, stu_name, imei, mobiletype):
+    '''
+    登陆I南航，返回Cookie，失败返回空串
+    '''
+    cookie, message = Login(stu_name, login_id, login_password, imei, mobiletype).login()
+    if cookie == -1:
+        return "", message
+    else:
+        return cookie, message
 
 
 # longitude: 经度； latitude: 纬度
@@ -111,8 +142,11 @@ def get_uid_id(cookies):
     for _ in range(try_times):
         try:
             time.sleep(delay)
+            # response = requests.get(
+            #     'http://m.nuaa.edu.cn/ncov/wap/default', cookies=cookies)
+            headers['Cookie'] = cookies
             response = requests.get(
-                'http://m.nuaa.edu.cn/ncov/wap/default', cookies=cookies)
+                'http://m.nuaa.edu.cn/ncov/wap/default', headers=headers)
             response.encoding = 'utf-8'
             uid = re.search(r'"uid":"([0-9]*)"', response.text).group(1)
             id = re.search(r'"id":([0-9]*)', response.text).group(1)
@@ -275,7 +309,10 @@ def check(cookies, geo_api_info, id, uid):
     for _ in range(try_times):
         try:
             time.sleep(delay)
-            response = requests.post('http://m.nuaa.edu.cn/ncov/wap/default/save', data=data, cookies=cookies)
+            headers['Cookie'] = cookies
+            response = requests.post('https://m.nuaa.edu.cn/ncov/wap/default/save',
+                                     data=data, headers=headers)
+            # response = requests.post('http://m.nuaa.edu.cn/ncov/wap/default/save', data=data, cookies=cookies)
             print('sign statue code:', response.status_code)
             # print('sign return:', response.text)
             response.encoding = 'utf-8'
@@ -309,8 +346,11 @@ def main():
     # with open("stu.json", 'r', encoding='UTF-8') as f:
     #     config = json.load(f)
 
+    imei = config['imei']
+    mobiletype = config['mobiletype']
     for student in config['students']:
         result = False  # 打卡结果，False表示没有打上
+        stu_name = student['name']
         stu_number = student['stu_number']
         password = student['password']
         longitude = student['longitude']
@@ -320,7 +360,9 @@ def main():
         message2 = ''
         print('--------------------------------------')
         try:
-            cookies, message = login(stu_number, password)
+            # cookies, message = login(stu_number, password)
+            cookies,message = new_login(stu_number, password, stu_name, imei, mobiletype)
+
             geo_api_info = get_address_info(longitude, latitude)
             uid, id, message1 = get_uid_id(cookies)
             result, message2 = check(cookies, geo_api_info, id, uid)
