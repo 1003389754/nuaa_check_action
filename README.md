@@ -30,7 +30,8 @@
       "password": "",
       "mail": "",
       "longitude": ,
-      "latitude": 
+      "latitude": ,
+      "cookie": "",
     }
   ]
 }
@@ -42,6 +43,7 @@
 | imei  | 移动设备imei号                         |
 | mobiletype  | 移动设备类型，默认android                  |
 |  name  | 学生姓名                              |
+|cookie|通过fiddler抓取手机i南航登陆时的cookie，填入到配置文件中，这样就不用每次登录，避免了手机端被顶掉。|
 
 ## Q&A
 
