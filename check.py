@@ -345,11 +345,11 @@ def send_result(config, recever, result, messgae):
 
 
 def main():
-    # config = sys.stdin.read()
-    # config = json.loads(config)
-    config = []
-    with open("stu.json", 'r', encoding='UTF-8') as f:
-        config = json.load(f)
+    config = sys.stdin.read()
+    config = json.loads(config)
+    # config = []
+    # with open("stu.json", 'r', encoding='UTF-8') as f:
+    #     config = json.load(f)
 
     imei = config['imei']
     mobiletype = config['mobiletype']
