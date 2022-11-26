@@ -1,4 +1,5 @@
 # encoding=utf-8
+import ast
 import traceback
 import re
 import json
@@ -12,7 +13,7 @@ from send_mail import send_mail
 
 # from requests_toolbelt.utils import dump
 
-try_times = 1  # 失败这么多次后就直接不管了
+try_times = 3  # 失败这么多次后就直接不管了
 delay = 2  # 访问页面前的延迟，为了防止过快访问网站被封IP
 
 # headers，所有的请求都用这个作为headers
@@ -148,9 +149,13 @@ def get_uid_id(cookies):
             response = requests.get(
                 'http://m.nuaa.edu.cn/ncov/wap/default', headers=headers)
             response.encoding = 'utf-8'
-            uid = re.search(r'"uid":"([0-9]*)"', response.text).group(1)
-            id = re.search(r'"id":([0-9]*)', response.text).group(1)
-            return uid, id, 'UID获取成功\n'
+            # '{"e":10013,"m":"用户信息已失效,请重新进入页面","d":{"login_url":"https://m.nuaa.edu.cn/uc/wap/login?redirect=https%3A%2F%2Fm.nuaa.edu.cn%2Fuc%2Fwap%2Flogin%2Fcheck"}}'
+            if "操作成功" in response.text:
+                uid = re.search(r'"uid":"([0-9]*)"', response.text).group(1)
+                id = re.search(r'"id":([0-9]*)', response.text).group(1)
+                return uid, id, "操作成功"
+            else:
+                return 0, 0, "获取id、uid失败，可能为cookie失效"
         except:
             traceback.print_exc()
     # 就这样吧，让他崩溃，万一假打卡了就不好了
@@ -340,11 +345,11 @@ def send_result(config, recever, result, messgae):
 
 
 def main():
-    config = sys.stdin.read()
-    config = json.loads(config)
-    # config = []
-    # with open("stu.json", 'r', encoding='UTF-8') as f:
-    #     config = json.load(f)
+    # config = sys.stdin.read()
+    # config = json.loads(config)
+    config = []
+    with open("stu.json", 'r', encoding='UTF-8') as f:
+        config = json.load(f)
 
     imei = config['imei']
     mobiletype = config['mobiletype']
@@ -357,14 +362,23 @@ def main():
         latitude = student['latitude']
         mail = student['mail']
         message = ''
+        message1 = ''
         message2 = ''
         print('--------------------------------------')
         try:
             # cookies, message = login(stu_number, password)
-            cookies,message = new_login(stu_number, password, stu_name, imei, mobiletype)
+            cookies = student['cookie']
+            if cookies == '':
+                cookies, message = new_login(stu_number, password, stu_name, imei, mobiletype)
+                uid, id, message1 = get_uid_id(cookies)
+            else:
+                uid, id, message1 = get_uid_id(cookies)
+                # 可能使cookies失效了，重新登录
+                if message1 != "操作成功":
+                    cookies, message = new_login(stu_number, password, stu_name, imei, mobiletype)
+                    uid, id, message1 = get_uid_id(cookies)
 
             geo_api_info = get_address_info(longitude, latitude)
-            uid, id, message1 = get_uid_id(cookies)
             result, message2 = check(cookies, geo_api_info, id, uid)
             message += message1 + message2
         except:
