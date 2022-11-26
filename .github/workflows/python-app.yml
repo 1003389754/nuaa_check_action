@@ -4,7 +4,7 @@ on:
   push:
   schedule:
   # 16+8=24
-  - cron: '0 16 * * *' 
+  - cron: '5 16 * * *'
 
 jobs:
   bot:
@@ -22,6 +22,7 @@ jobs:
     - name: Pip
       run: |
           pip3 install requests
+          pip3 install js2py
       
     # 执行仓库中的脚本文件
     - name: Run python
